@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>タスク管理アプリ</title>
+    <!-- Vue.js -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+    <!-- Vuetify -->
+    <link href="https://cdn.jsdelivr.net/npm/vuetify@2.5.10/dist/vuetify.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@2.5.10/dist/vuetify.js"></script>
+    <!-- Axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        body {
+            background-image: url('https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0') !important;
+            background-size: cover;
+            background-position: center;
+            color: white; 
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .app-title {
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #004d40; /* 濃い緑色に設定 */
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6); /* 黒いシャドウを追加 */
+        }
+
+        .card-background {
+            background: rgba(255, 255, 255, 0.2); /* 背景の透明度を少し上げて強調 */
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-content {
+            background-color: rgba(0, 128, 0, 0.7); /* 緑色の背景 */
+            border-radius: 10px;
+            padding: 10px;
+            color: #e8f5e9;
+        }
+
+        .card-btn {
+            border-radius: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #fff !important;
+            transition: background-color 0.3s ease;
+        }
+
+        .card-btn:hover {
+            background-color: #004d40;
+        }
+
+        .v-btn--green {
+            background-color: #2e7d32 !important;
+        }
+
+        .v-btn--green-lighten-1 {
+            background-color: #66bb6a !important;
+        }
+
+        .v-btn--red-darken-1 {
+            background-color: #d32f2f !important;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <v-app>
+            <v-content>
+                <v-container>
+                    <v-row
+                        class="text-h3 mb-5 mt-5 app-title"
+                        justify="center"
+                    >
+                        タスク管理アプリ
+                    </v-row>
+                    <v-row
+                        class="mb-5 mt-5 card-background"
+                        align="center"
+                        justify="center"
+                    >
+                        <v-col cols="4">
+                            <v-text-field
+                                class="ml-6 mr-6"
+                                v-model="title"
+                                label="タスクタイトルを入力"
+                                placeholder="タスクタイトルを入力…"
+                                outlined
+                                color="green"
+                                dense
+                                filled
+                                solo
+                            ></v-text-field>
+                        </v-col>
+                        <v-col cols="4">
+                            <v-text-field
+                                class="ml-6 mr-6"
+                                v-model="status"
+                                label="ステータスを入力"
+                                placeholder="ステータスを入力…"
+                                outlined
+                                color="green"
+                                dense
+                                filled
+                                solo
+                            ></v-text-field>
+                        </v-col>
+                        <v-col cols="4">
+                            <v-menu
+                                ref="menu"
+                                v-model="menu"
+                                :close-on-content-click="false"
+                                :nudge-right="40"
+                                transition="scale-transition"
+                                offset-y
+                                min-width="auto"
+                            >
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-text-field
+                                        v-model="due_date"
+                                        label="締め切り日"
+                                        readonly
+                                        v-bind="attrs"
+                                        v-on="on"
+                                        outlined
+                                        color="green"
+                                        dense
+                                        filled
+                                        solo
+                                    ></v-text-field>
+                                </template>
+                                <v-date-picker
+                                    v-model="due_date"
+                                    @input="menu = false"
+                                    color="green"
+                                ></v-date-picker>
+                            </v-menu>
+                        </v-col>
+                    </v-row>
+                    <v-row
+                        class="mb-5 mt-5 card-background card-content"
+                        align="center"
+                        justify="center"
+                    >
+                        入力内容　タイトル: {{ title }} ステータス: {{ status }} 期限: {{ due_date }}
+                        <v-btn v-on:click="addData" dark small color="green darken-2" class="card-btn">
+                            DBに登録
+                        </v-btn>
+                    </v-row>
+                    <v-row
+                        class="mb-5 mt-5 card-background card-content"
+                        justify="center"
+                    >
+                        <v-btn v-on:click="readData" rounded class="card-btn" color="green lighten-1">
+                            現在の登録内容を表示する
+                        </v-btn>
+                    </v-row>
+                    <v-row 
+                        class="mb-5 mt-5 card-background card-content"
+                        justify="center"
+                        v-for="(data, index) in dataList" :key="index"
+                    >
+                        ID: {{ data.TaskID }}, タイトル: {{ data.Title }}, ステータス: {{ data.Status }}, 期限: {{ data.DueDate.split('T')[0] }}
+                        <v-btn @click="editData(index)" color="green" small class="card-btn">編集</v-btn>
+                        <v-btn @click="updateData(index)" color="blue darken-1" small class="card-btn">更新</v-btn>
+                        <v-btn @click="deleteData(index)" color="red darken-1" small class="card-btn">削除</v-btn>
+                    </v-row>
+                </v-container>
+            </v-content>
+        </v-app>
+    </div>
+    <script>
+        new Vue({
+            el: '#app',
+            vuetify: new Vuetify(),
+            data() {
+                return {
+                    title: '',  // タスクのタイトル格納変数
+                    status: '', // タスクのステータス格納変数
+                    due_date: '', // タスクの期限格納変数
+                    dataList: [], // データ表示用配列
+                    menu: false, // カレンダーの表示制御
+                };
+            },
+            methods: {
+                // DBにデータを追加する関数
+                async addData() {
+                    if(!this.title || !this.status || !this.due_date){
+                        console.log("すべてのフィールドにデータを入力してください");
+                        return;
+                    }
+                    
+                    const param = {
+                        title: this.title,
+                        status: this.status,
+                        due_date: this.due_date
+                    };
+                    
+                    try {
+                        const response = await axios.post('https://m3h-kouhei-2010.azurewebsites.net/api/INSERT', param);
+                        console.log(response.data);
+                        this.readData(); // データを登録した後、最新のリストを表示
+                    } catch (error) {
+                        console.error("データの登録に失敗しました", error);
+                    }
+                },
+                // データベースからデータを取得する関数
+                async readData() {
+                    try {
+                        const response = await axios.get('https://m3h-kouhei-2010.azurewebsites.net/api/SELECT');
+                        console.log(response.data);
+                        this.dataList = response.data.List;
+                    } catch (error) {
+                        console.error("データの取得に失敗しました", error);
+                    }
+                },
+                // データの編集を行う関数
+                editData(index) {
+                    const task = this.dataList[index];
+                    this.title = task.Title;
+                    this.status = task.Status;
+                    this.due_date = task.DueDate.split('T')[0]; // 日付部分のみを使用
+                },
+                // データの削除を行う関数
+                async deleteData(index) {
+                    const task = this.dataList[index];
+                    try {
+                        const response = await axios.post('https://m3h-kouhei-2010.azurewebsites.net/api/DELETE', { taskID: task.TaskID });
+                        console.log(response.data);
+                        this.readData(); // 削除後のリストを更新
+                    } catch (error) {
+                        console.error("データの削除に失敗しました", error);
+                    }
+                },
+                // データの更新を行う関数
+                async updateData(index) {
+                    const task = this.dataList[index];
+                    const param = {
+                        taskID: task.TaskID,
+                        title: this.title,
+                        status: this.status,
+                        due_date: this.due_date
+                    };
+                    
+                    try {
+                        const response = await axios.post('https://m3h-kouhei-2010.azurewebsites.net/api/UPDATE', param);
+                        console.log(response.data);
+                        this.readData(); // 更新後のリストを表示
+                    } catch (error) {
+                        console.error("データの更新に失敗しました", error);
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
