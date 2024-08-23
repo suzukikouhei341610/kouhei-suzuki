@@ -2,7 +2,7 @@
 <html lang="en" >
 <head>
   <meta charset="UTF-8">
-  <title>- タスク管理　編集前</title>
+  <title>CodePen - タスク管理　編集前</title>
   <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css'>
 <link rel='stylesheet' href='https://unpkg.com/@mdi/font@6.x/css/materialdesignicons.min.css'>
 <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900'><link rel="stylesheet" href="./style.css">
@@ -24,7 +24,87 @@
     <!-- Axios -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            background-image: url('https://example.com/path/to/your/jungle-image.jpg') !important;
+            background-size: cover;
+            background-position: center;
+            color: white; 
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .app-title {
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #004d40; /* 濃い緑色に設定 */
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6); /* 黒いシャドウを追加 */
+        }
+
+        .card-background {
+            background: rgba(255, 255, 255, 0.2); /* 背景の透明度を少し上げて強調 */
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-content {
+            background-color: rgba(0, 128, 0, 0.7); /* 緑色の背景 */
+            border-radius: 10px;
+            padding: 10px;
+            color: #e8f5e9;
+        }
+
+        .card-btn {
+            border-radius: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #fff !important;
+            transition: background-color 0.3s ease;
+        }
+
+        .card-btn:hover {
+            background-color: #004d40;
+        }
+
+        .v-btn--green {
+            background-color: #2e7d32 !important;
+        }
+
+        .v-btn--green-lighten-1 {
+            background-color: #66bb6a !important;
+        }
+
+        .v-btn--red-darken-1 {
+            background-color: #d32f2f !important;
+        }
+
+        .v-btn--blue-darken-1 {
+            background-color: #1976d2 !important;
+        }
+
+        .v-btn--grey-lighten-2 {
+            background-color: #f5f5f5 !important;
+            color: #000 !important;
+        }
+
+        .table-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .v-data-table {
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .v-btn--current {
+            background-color: #66bb6a !important; /* ボタンの背景色を見やすく設定 */
+            color: white !important;
+        }
+    </style>
 </head>
 <body>
     <div id="app">
@@ -114,30 +194,21 @@
                         class="mb-5 mt-5 card-background card-content"
                         justify="center"
                     >
-                        <v-btn v-on:click="readData" rounded class="card-btn" color="green darken-1">
+                        <v-btn v-on:click="readData" rounded class="card-btn v-btn--current">
                             現在の登録内容を表示する
                         </v-btn>
                     </v-row>
-                    <v-row 
-                        class="mb-5 mt-5 card-background card-content"
-                        justify="center"
-                    >
+                    <v-row class="table-container">
                         <v-data-table
                             :headers="headers"
                             :items="dataList"
-                            class="elevation-1"
-                            hide-default-footer
-                            dense
+                            item-key="TaskID"
+                            class="v-data-table"
                         >
-                            <template v-slot:items="props">
-                                <td>{{ props.item.Title }}</td>
-                                <td>{{ props.item.Status }}</td>
-                                <td>{{ props.item.DueDate.split('T')[0] }}</td>
-                                <td>
-                                    <v-btn @click="editData(props.item)" color="green" small class="card-btn">編集</v-btn>
-                                    <v-btn @click="updateData(props.item)" color="blue darken-1" small class="card-btn">更新</v-btn>
-                                    <v-btn @click="deleteData(props.item)" color="red darken-1" small class="card-btn">削除</v-btn>
-                                </td>
+                            <template v-slot:item.action="{ item, index }">
+                                <v-btn @click="editData(index)" color="green" small class="card-btn">編集</v-btn>
+                                <v-btn @click="updateData(index)" color="blue darken-1" small class="card-btn">更新</v-btn>
+                                <v-btn @click="deleteData(index)" color="red darken-1" small class="card-btn">削除</v-btn>
                             </template>
                         </v-data-table>
                     </v-row>

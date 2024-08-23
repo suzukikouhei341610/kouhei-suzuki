@@ -11,12 +11,12 @@ const app = new Vue({
             { text: 'タイトル', value: 'Title' },
             { text: 'ステータス', value: 'Status' },
             { text: '期限', value: 'DueDate' },
-            { text: '操作', value: 'action', sortable: false }
+            { text: 'アクション', value: 'action', sortable: false }
         ]
     },
     methods: {
         addData: async function() {
-            if (!this.title || !this.status || !this.due_date) {
+            if(!this.title || !this.status || !this.due_date) {
                 console.log("すべてのフィールドにデータを入力してください");
                 return;
             }
