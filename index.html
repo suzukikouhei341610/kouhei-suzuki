@@ -2,7 +2,7 @@
 <html lang="en" >
 <head>
   <meta charset="UTF-8">
-  <title> - タスク管理　元祖</title>
+  <title>- タスク管理　編集前</title>
   <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css'>
 <link rel='stylesheet' href='https://unpkg.com/@mdi/font@6.x/css/materialdesignicons.min.css'>
 <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900'><link rel="stylesheet" href="./style.css">
@@ -114,19 +114,32 @@
                         class="mb-5 mt-5 card-background card-content"
                         justify="center"
                     >
-                        <v-btn v-on:click="readData" rounded class="card-btn" color="green lighten-1">
+                        <v-btn v-on:click="readData" rounded class="card-btn" color="green darken-1">
                             現在の登録内容を表示する
                         </v-btn>
                     </v-row>
                     <v-row 
                         class="mb-5 mt-5 card-background card-content"
                         justify="center"
-                        v-for="(data, index) in dataList" :key="index"
                     >
-                        ID: {{ data.TaskID }}, タイトル: {{ data.Title }}, ステータス: {{ data.Status }}, 期限: {{ data.DueDate.split('T')[0] }}
-                        <v-btn @click="editData(index)" color="green" small class="card-btn">編集</v-btn>
-                        <v-btn @click="updateData(index)" color="blue darken-1" small class="card-btn">更新</v-btn>
-                        <v-btn @click="deleteData(index)" color="red darken-1" small class="card-btn">削除</v-btn>
+                        <v-data-table
+                            :headers="headers"
+                            :items="dataList"
+                            class="elevation-1"
+                            hide-default-footer
+                            dense
+                        >
+                            <template v-slot:items="props">
+                                <td>{{ props.item.Title }}</td>
+                                <td>{{ props.item.Status }}</td>
+                                <td>{{ props.item.DueDate.split('T')[0] }}</td>
+                                <td>
+                                    <v-btn @click="editData(props.item)" color="green" small class="card-btn">編集</v-btn>
+                                    <v-btn @click="updateData(props.item)" color="blue darken-1" small class="card-btn">更新</v-btn>
+                                    <v-btn @click="deleteData(props.item)" color="red darken-1" small class="card-btn">削除</v-btn>
+                                </td>
+                            </template>
+                        </v-data-table>
                     </v-row>
                 </v-container>
             </v-content>
