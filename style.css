@@ -1,0 +1,61 @@
+body {
+    background-image: url('https://example.com/path/to/your/jungle-image.jpg') !important;
+    background-size: cover;
+    background-position: center;
+    color: white;
+    font-family: 'Roboto', sans-serif;
+}
+
+.app-title {
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #004d40;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+.card-background {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.card-content {
+    background-color: rgba(0, 128, 0, 0.7);
+    border-radius: 10px;
+    padding: 10px;
+    color: #e8f5e9;
+}
+
+.card-btn {
+    border-radius: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #fff !important;
+    transition: background-color 0.3s ease;
+}
+
+.card-btn:hover {
+    background-color: #004d40;
+}
+
+.v-btn--green {
+    background-color: #2e7d32 !important;
+}
+
+.v-btn--green-darken-1 {
+    background-color: #004d40 !important; /* ボタン背景色を濃い緑に変更 */
+    color: #ffffff !important; /* テキストを白に変更 */
+}
+
+.v-btn--red-darken-1 {
+    background-color: #d32f2f !important;
+}
+
+.v-data-table {
+    width: 100%;
+    margin: 0 auto; /* テーブルを中央に配置 */
+    max-width: 800px; /* テーブルの最大幅を設定 */
+}
